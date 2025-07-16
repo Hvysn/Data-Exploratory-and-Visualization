@@ -1,0 +1,42 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+marks_math = np.array([78, 85, 92, 88, 70])
+marks_science = np.array([84, 79, 94, 90, 75])
+print("Math Marks:", marks_math)
+print("Science Marks:", marks_science)
+print("Average Marks per Subject:", (marks_math + marks_science)/2)
+print("Overall Mean Score:", np.mean((marks_math + marks_science)/2))
+data = {
+    'Student': ['A', 'B', 'C', 'D', 'E'],
+    'Math': marks_math,
+    'Science': marks_science
+}
+df = pd.DataFrame(data)
+df['Average'] = df[['Math', 'Science']].mean(axis=1)
+high_achievers = df[df['Average'] > 80]
+print("\nFull DataFrame:")
+print(df)
+print("\nHigh Achievers (Avg > 80):")
+print(high_achievers)
+plt.plot(df['Student'], df['Math'], marker='o', label='Math')
+plt.plot(df['Student'], df['Science'], marker='s', label='Science')
+plt.title('Student Marks in Math and Science')
+plt.xlabel('Student')
+plt.ylabel('Marks')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+plt.bar(df['Student'], df['Average'], color='orange')
+plt.title('Average Marks per Student')
+plt.xlabel('Student')
+plt.ylabel('Average Marks')
+plt.show()
+
+all_scores = np.concatenate((marks_math, marks_science))
+plt.hist(all_scores, bins=5, color='purple', edgecolor='black')
+plt.title('Score Distribution')
+plt.xlabel('Marks')
+plt.ylabel('Frequency')
+plt.show()
