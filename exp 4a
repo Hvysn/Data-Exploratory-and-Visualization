@@ -1,0 +1,34 @@
+import pandas as pd
+import numpy as np
+
+# Step 1: Create a sample dataset
+date_range = pd.date_range(start="2025-01-01", end="2025-12-31", freq="W")
+cities = ["Mumbai", "Delhi", "Chennai"]
+data = []
+
+np.random.seed(42)  # For reproducibility
+
+for city in cities:
+    temps = np.random.randint(15, 40, size=len(date_range))  # Random weekly temperatures
+    for date, temp in zip(date_range, temps):
+        data.append({"city": city, "date": date, "temperature": temp})
+
+df = pd.DataFrame(data)
+
+# Step 2: Extract month and group by city and month to get sum
+df['month'] = df['date'].dt.month_name()
+monthly_sum = df.groupby(['city', 'month'], sort=False)['temperature'].sum().reset_index()
+
+# Step 3: Pivot to reshape the data
+pivot_df = monthly_sum.pivot(index='city', columns='month', values='temperature')
+
+# Optional: Sort columns by calendar month order
+month_order = ['January', 'February', 'March', 'April', 'May', 'June',
+               'July', 'August', 'September', 'October', 'November', 'December']
+pivot_df = pivot_df.reindex(columns=month_order)
+
+# Step 4: Fill any missing values with 0 and display
+pivot_df = pivot_df.fillna(0).astype(int)
+
+print("Month-wise Temperature Sum by City (in °C):")
+print(pivot_df)
