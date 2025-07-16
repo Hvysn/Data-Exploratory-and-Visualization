@@ -1,0 +1,53 @@
+# Step 1: Import required libraries
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+import string
+
+# Step 2: Load dataset
+df = pd.read_csv("spam.csv", encoding='latin-1')[['v1', 'v2']]
+df.columns = ['label', 'message']  # Rename columns
+
+# Step 3: Basic Info
+print(df.info())
+print(df.describe())
+print(df.head())
+
+# Step 4: Check class balance
+sns.countplot(x='label', data=df)
+plt.title("Count of Spam vs Ham")
+plt.show()
+
+# Step 5: Add message length column
+df['length'] = df['message'].apply(len)
+sns.histplot(data=df, x='length', hue='label', bins=50)
+plt.title("Distribution of Message Lengths")
+plt.show()
+
+# Step 6: WordCloud for Ham and Spam
+ham_text = " ".join(df[df['label']=='ham']['message'].tolist())
+spam_text = " ".join(df[df['label']=='spam']['message'].tolist())
+
+plt.figure(figsize=(14,6))
+
+plt.subplot(1, 2, 1)
+wordcloud_ham = WordCloud(width=600, height=400, background_color='white').generate(ham_text)
+plt.imshow(wordcloud_ham, interpolation='bilinear')
+plt.axis('off')
+plt.title("WordCloud - Ham Messages")
+
+plt.subplot(1, 2, 2)
+wordcloud_spam = WordCloud(width=600, height=400, background_color='black').generate(spam_text)
+plt.imshow(wordcloud_spam, interpolation='bilinear')
+plt.axis('off')
+plt.title("WordCloud - Spam Messages")
+
+plt.tight_layout()
+plt.show()
+
+# Step 7: Check for missing data
+print(df.isnull().sum())
+
+# Step 8: Length stats
+print(df.groupby('label')['length'].describe())
